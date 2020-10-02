@@ -8,12 +8,16 @@ class Arguments
 end
 
 class Acronym
+
+    def initialize(str)
+        @str = str
+    end
+
     def abbreviate
-        ARGV[0].split("-").join(" ").split.map(&:chr).join.upcase
+        @str.split("-").join(" ").split.map(&:chr).join.upcase
     end
   end
 
 
-aronym = Acronym.new
-ARGV = aronym.abbreviate
-Arguments.run(ARGV)
+acronym = Acronym.new("Ruby,@ On$ Rails")
+p acronym.abbreviate
