@@ -23,11 +23,11 @@ class Meetup
       if which == :last
         day = matches[-1]
       elsif which == :teenth
-        day = matches.select{ |d| d > 12 }[0]
+        day = matches.find{ |d| d > 12 }
       else
         day = matches[ORDINALS.index(which)]
       end
-      return Date.new(@year, @month, day) 
+     	 Date.new(@year, @month, day) 
     end
   end
 
