@@ -14,7 +14,7 @@ class Acronym
     end
 
     def abbreviate
-        @str.split("-").join(" ").split.map(&:chr).join.upcase
+        @str.scan(/\w+/).join(" ").split.map(&:chr).join.upcase
     end
   end
 
