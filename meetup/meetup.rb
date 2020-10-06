@@ -19,7 +19,7 @@ class Meetup
     end
   
     def day(weekday, which)
-      matches = (1..Date.new(@year, @month, -1).day).select{ |d| Date.new(@year, @month, d).wday == WEEKDAYS.index(weekday) }
+      matches = (1..Date.new(@year, @month, -1).day).select{ |d| Date.new(@year, @month, d).wday == WEEKDAYS[weekday] }
       if which == :last
         day = matches[-1]
       elsif which == :teenth
