@@ -8,8 +8,8 @@ To get started with TDD, see the `README.md` file in your
 
 require 'date'
 
-WEEKDAYS = [:sunday, :monday, :tuesday, :wednesday, :thursday, :friday, :saturday]
-ORDINALS = [:first, :second, :third, :fourth, :fifth] 
+WEEKDAYS = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 }
+ORDINALS = { first: 0, second: 1, third: 2, fourth: 3, fifth: 4 } 
 
 class Meetup
 
