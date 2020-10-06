@@ -14,7 +14,7 @@ class Queens
     end
 
     def is_attack?
-        row? || col? || diagonal? ? true : false
+        row? || col? || diagonal?
     end
 
     def row?
