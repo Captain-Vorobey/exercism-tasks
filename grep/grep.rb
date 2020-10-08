@@ -1,13 +1,13 @@
-require_relative ('flags.rb')
+require_relative('flags.rb')
 
 class Grep
-    def self.grep(pattern, flags, files)
-        Flags.new.which_flag(files, flags, pattern)
-    end
+  def self.grep(pattern, flags, files)
+    Flags.new.which_flag(files, flags, pattern)
+  end
 end
 
-files = ["text.txt", "text1.txt"]
+files = ['text.txt', 'text1.txt']
 flags = []
-pattern = "hello"
+pattern = 'hello'
 
 Grep.grep(pattern, flags, files)
