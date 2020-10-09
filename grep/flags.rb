@@ -3,6 +3,8 @@ require 'io/console'
 class Flags
   def initialize
     @result = []
+    @files = []
+    @all_result = []
   end
 
   def down_case_rows(rows, files, pattern)
@@ -26,7 +28,7 @@ class Flags
   def v_flag(files, pattern)
     files.each do |file|
       IO.readlines(file).each do |string|
-        @result.push(string) if string.match(/#{pattern}/)
+        @result.push(string) if !string.match(/#{pattern}/)
       end
     end
     @result
@@ -36,12 +38,12 @@ class Flags
     files.each do |file|
       IO.readlines(file).each do |string|
         if string.match(/#{pattern}/)
-          @result.push(file)
+          @files.push(file)
           break
         end
       end
     end
-    @result
+    @files
   end
 
   def i_flag(files, pattern)
@@ -52,7 +54,9 @@ class Flags
   def x_flag(files, pattern)
     files.each do |file|
       IO.readlines(file).each do |string|
-        @result.push(file) if string == /#{pattern}/
+        if string.match(/^#{pattern}$/)
+          @result.push(string)
+        end 
       end
     end
     @result
@@ -66,20 +70,32 @@ class Flags
     end
     @result
   end
-
-  def which_flag(files, flags, pattern)
-    case flags[0]
-
-    when '-l'
-      p l_flag(files, pattern)
-    when '-i'
-      p @result.push(i_flag(files, pattern))
-    when '-n'
-      p n_flag(files, pattern)
-    when '-v'
-      p v_flag(files, pattern)
-    else
-      no_flags(files, pattern)
+  # ['-n', '-l', '-i', '-v', '-x']
+  def flags(files, flags, pattern)
+    if flags.any? == false
+      @all_result = no_flags(files, pattern)
     end
+    flags.each do |flag|
+      if flag == '-n'
+        @all_result = n_flag(files, pattern)
+      end
+
+      if flag == '-l'
+        return l_flag(files, pattern)
+      end
+
+      if flag == '-i'
+        @all_result = i_flag(files, pattern)
+      end
+
+      if flag == '-v'
+        @all_result = v_flag(files, pattern)
+      end
+
+      if flag == '-x'
+        @all_result = x_flag(files, pattern)
+      end
+    end
+    @all_result
   end
 end

@@ -1,10 +1,2 @@
-
-heLLo f
-r
 hello
-HELLO f world
-hello
-hello
-r
-g
-d
+hh
