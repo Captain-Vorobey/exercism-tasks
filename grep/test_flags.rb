@@ -1,36 +1,30 @@
 require 'io/console'
 
 class Flags
-  def initialize(flags, files)
+  def initialize(flags)
     @result = []
     @flags = flags
-    @files = files
   end
 
-  def read_files(files)
-    src = {}
-    files.each { |name| src[name] = File.read(name) }
-    src
-  end
-
-  def grep(str)
+  def grep(str, files)
     pattern = create_pattern(str)
-    @flags.include?('-v') ? v_flag(pattern) : f(pattern)
-    @flags.include?('-l') && @result.length > 1 ? @result.uniq : @result
+    p pattern
+    @flags.include?('-v') ? v_flag(files, pattern) : f(files, pattern)
+    @result
   end
 
   private
 
-  def f(pattern)
-    @files.each do |file|
+  def f(files, pattern)
+    files.each do |file|
       IO.readlines(file).each_with_index do |string, index|
         @result.push(check_flags(file, string, index)) if string.match(pattern)
       end
     end
   end
 
-  def v_flag(pattern)
-    @files.each do |file|
+  def v_flag(files, pattern)
+    files.each do |file|
       IO.readlines(file).each_with_index do |string, index|
         @result.push(check_flags(file, string, index)) unless string.match(pattern)
       end
@@ -40,18 +34,12 @@ class Flags
   def check_flags(file, string, index)
     n = @flags.include?('-n') ? "#{index + 1}:" : ''
     l = @flags.include?('-l') ? "#{file}:" : ''
-    return "#{l.chop}\n" if @flags.include?('-l')
-
-    if @files.length > 1
-      "#{file}:#{n}#{string}"
-    else
-      "#{n}#{string}"
-    end
+    "#{l}#{n}#{string}"
   end
 
   def create_pattern(str)
     i = @flags.include?('-i') ? Regexp::IGNORECASE : false
-    x = @flags.include?('-x') ? "^#{str}$" : str
-    pattern = Regexp.new(x, i)
+    x = @flags.include?('-x') ? Regexp::MULTILINE : false
+    pattern = Regexp.new(str.to_s, i || x)
   end
 end
