@@ -1,59 +1,49 @@
-
 require 'io/console'
 
 class Grep
   def initialize(pattern, flags, files)
     @pattern = pattern
     @flags = flags
-    p @files = files
+    @files = files
   end
 
   def self.grep(pattern, flags, files)
-    result = Grep.new(pattern, flags, files).grep
+    Grep.new(pattern, flags, files).grep
   end
 
   def grep
     create_pattern
     f
-    @flags.include?('-l') && @result.length > 1 ? @result.uniq : @result
   end
 
   private
 
-  attr_reader :pattern, :flags, :files
-  
   def f
-    combine_files.map { |f_name, lines| check_flags(f_name, lines) }
+    combine_files.map { |f_name, lines| check_flags(f_name, lines) }.compact.join("\n").strip
   end
 
   def combine_files
-    @files.each_with_object({}) do |f_name, lines|
+  @files.each_with_object({}) do |f_name, lines|
       lines[f_name] = get_lines(f_name)
-      p 'combine_files lines nil: '
-      p lines[f_name]
-      p 'combine_files get_lines nil: '
-      p get_lines(f_name)
     end
   end
 
   def get_lines(f_name)
     file = File.open(f_name)
     file.readlines.map(&:chomp)
-    file.close
   end
 
   def check_flags(file, lines)
     return l_flag(file, lines) if @flags.include?('-l')
-    p 'check flags nil: '
-    p lines
-    lines.each_with_index do |line, index|
+
+    lines.each_with_index.map do |line, index|
       "#{multi_files(file)}#{need_index(index)}#{line}" if v_match(line)
-    end
+    end.compact.join("\n")
   end
 
   def create_pattern
     i = @flags.include?('-i') ? Regexp::IGNORECASE : false
-    x = @flags.include?('-x') ? "^#{@pattern}$" : @pattren
+    x = @flags.include?('-x') ? "^#{@pattern}$" : @pattern
     @pattern = Regexp.new(x, i)
   end
 
@@ -70,12 +60,11 @@ class Grep
   end
 
   def l_flag(file, lines)
-    lines.any? { |line| v_match(line) } ? file : ''
+    lines.any? { |line| v_match(line) } ? file : nil
   end
 end
 
-pattern = 'OF ATREUS, Agamemnon, KIng of MEN.'
-flags = ['-n', '-i', '-x']
+pattern = 'Agamemnon'
+flags = ['-l']
 files = ['test.txt', 'test1.txt']
-
-p Grep.grep(pattern, flags, files)
+puts Grep.grep(pattern, flags, files)
