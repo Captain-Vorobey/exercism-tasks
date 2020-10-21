@@ -1,6 +1,13 @@
 require 'io/console'
 
 class Grep
+
+  class << self
+    def grep(pattern, flags, files)
+      Grep.new(pattern, flags, files).grep
+    end
+  end
+
   def initialize(pattern, flags, files)
     @pattern = pattern
     @flags = flags
