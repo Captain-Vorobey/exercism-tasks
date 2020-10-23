@@ -14,20 +14,15 @@ class Grep
     @files = files
   end
 
-  def self.grep(pattern, flags, files)
-    Grep.new(pattern, flags, files).grep
-  end
-
   def grep
     create_pattern
-    f
+    combine_files
+      .map { |f_name, lines| check_flags(f_name, lines) }
+      .compact
+      .join("\n").strip
   end
 
   private
-
-  def f
-    combine_files.map { |f_name, lines| check_flags(f_name, lines) }.compact.join("\n").strip
-  end
 
   def combine_files
   @files.each_with_object({}) do |f_name, lines|
@@ -44,7 +39,7 @@ class Grep
     return l_flag(file, lines) if @flags.include?('-l')
 
     lines.each_with_index.map do |line, index|
-      "#{multi_files(file)}#{need_index(index)}#{line}" if v_match(line)
+      "#{multi_files?(file)}#{need_index?(index)}#{line}" if v_match(line)
     end.compact.join("\n")
   end
 
@@ -54,11 +49,11 @@ class Grep
     @pattern = Regexp.new(x, i)
   end
 
-  def need_index(index)
+  def need_index?(index)
     @flags.include?('-n') ? "#{index + 1}:" : ''
   end
 
-  def multi_files(file)
+  def multi_files?(file)
     @files.size > 1 ? "#{file}:" : ''
   end
 
@@ -70,8 +65,3 @@ class Grep
     lines.any? { |line| v_match(line) } ? file : nil
   end
 end
-
-pattern = 'Agamemnon'
-flags = ['-l']
-files = ['test.txt', 'test1.txt']
-puts Grep.grep(pattern, flags, files)
